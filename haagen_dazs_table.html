@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Häagen-Dazs — Nutrition Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --deep: #1A1008;
+    --burgundy: #6B1A2A;
+    --burgundy-light: #8B2A3A;
+    --gold: #C8954A;
+    --gold-light: #E8B870;
+    --muted: #8A7E74;
+    --border: rgba(106,26,42,0.15);
+    --card-bg: #FFFFFF;
+    --sorbet-accent: #1D6B52;
+    --sorbet-light: #E8F5EF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--deep);
+    min-height: 100vh;
+    font-size: 15px;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--burgundy);
+    padding: 18px 24px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(106,26,42,0.3);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .hd-logo {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .hd-logo svg { width: 28px; height: 28px; }
+  .header-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--cream); letter-spacing: 0.01em; }
+  .header-sub { font-size: 11px; color: rgba(250,247,242,0.6); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; }
+  .flavor-count {
+    background: rgba(250,247,242,0.15);
+    color: var(--cream);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* CONTROLS */
+  .controls {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    flex: 1; min-width: 200px;
+    position: relative;
+  }
+  .search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: 16px; pointer-events: none;
+  }
+  input[type=text] {
+    width: 100%;
+    padding: 11px 12px 11px 38px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--deep);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type=text]:focus { border-color: var(--burgundy); }
+  input[type=text]::placeholder { color: var(--muted); }
+
+  .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill-btn {
+    padding: 9px 18px;
+    border-radius: 24px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .pill-btn:active { transform: scale(0.97); }
+  .pill-btn.active-all { background: var(--burgundy); color: white; border-color: var(--burgundy); }
+  .pill-btn.active-ic { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+  .pill-btn.active-so { background: var(--sorbet-light); color: var(--sorbet-accent); border-color: #9FE1CB; }
+
+  /* SORT BAR */
+  .sort-bar {
+    background: var(--cream);
+    padding: 10px 20px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    -ms-overflow-style: none; scrollbar-width: none;
+  }
+  .sort-bar::-webkit-scrollbar { display: none; }
+  .sort-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; margin-right: 4px; flex-shrink: 0; }
+  .sort-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--deep);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.18s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .sort-btn.active { background: var(--gold); color: var(--deep); border-color: var(--gold); font-weight: 500; }
+  .sort-btn:active { transform: scale(0.97); }
+  .sort-arrow { font-size: 11px; opacity: 0.7; }
+
+  /* RESULTS INFO */
+  .results-bar {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .results-bar strong { color: var(--deep); }
+
+  /* CARDS GRID */
+  .cards-grid {
+    padding: 0 16px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+
+  .flavor-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .flavor-card:active { transform: scale(0.99); }
+  .flavor-card.is-sorbet { border-top: 3px solid var(--sorbet-accent); }
+  .flavor-card.is-ice-cream { border-top: 3px solid var(--burgundy); }
+
+  .card-header {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 5px; }
+  .card-name { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--deep); line-height: 1.2; }
+  .type-badge {
+    font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 12px;
+    white-space: nowrap; flex-shrink: 0; letter-spacing: 0.04em;
+  }
+  .badge-ic { background: #EEEDFE; color: #3C3489; }
+  .badge-so { background: var(--sorbet-light); color: var(--sorbet-accent); }
+  .card-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* NUTRITION GRID */
+  .nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+  .nutr-cell {
+    padding: 12px 8px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .nutr-cell:nth-child(4n) { border-right: none; }
+  .nutr-cell:nth-last-child(-n+4) { border-bottom: none; }
+  .nutr-val { font-size: 18px; font-weight: 500; color: var(--deep); line-height: 1; }
+  .nutr-val.highlight { color: var(--burgundy); }
+  .nutr-val.sorbet-hl { color: var(--sorbet-accent); }
+  .nutr-unit { font-size: 10px; color: var(--muted); }
+  .nutr-label { font-size: 10px; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* SUGAR ROW — full width highlight */
+  .sugar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #FAEEDA;
+    border-top: 1px solid #F0D8A0;
+  }
+  .sugar-label { font-size: 12px; font-weight: 500; color: #633806; text-transform: uppercase; letter-spacing: 0.06em; }
+  .sugar-val { font-size: 22px; font-weight: 500; color: #633806; }
+  .sugar-sub { font-size: 11px; color: #854F0B; }
+  .sugar-bar-wrap { flex: 1; margin: 0 14px; }
+  .sugar-bar-bg { background: rgba(180,120,20,0.2); border-radius: 4px; height: 6px; }
+  .sugar-bar-fill { height: 6px; border-radius: 4px; background: #C8954A; transition: width 0.4s; }
+
+  /* CARD FOOTER */
+  .card-footer {
+    padding: 8px 16px;
+    display: flex; flex-wrap: wrap; gap: 5px;
+    border-top: 1px solid var(--border);
+  }
+  .attr-tag {
+    font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: 500;
+  }
+  .tag-gf { background: #EAF3DE; color: #27500A; }
+  .tag-ko { background: #E6F1FB; color: #0C447C; }
+  .tag-nd { background: #FAEEDA; color: #633806; }
+  .tag-al { background: #FBEAF0; color: #72243E; }
+  .tag-al2 { background: #F1EFE8; color: #444441; font-size: 10px; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    grid-column: 1 / -1;
+  }
+  .empty-state p { color: var(--muted); font-size: 15px; margin-top: 10px; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 500px) {
+    .header-title { font-size: 18px; }
+    .cards-grid { grid-template-columns: 1fr; padding: 0 12px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="hd-logo">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="20" cy="22" rx="14" ry="10" fill="#6B1A2A"/>
+        <ellipse cx="20" cy="20" rx="12" ry="9" fill="#8B2A3A"/>
+        <path d="M12 18 Q20 10 28 18" stroke="#C8954A" stroke-width="1.5" fill="none"/>
+        <circle cx="20" cy="13" r="4" fill="#C8954A"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Häagen-Dazs</div>
+      <div class="header-sub">Nutrition Guide</div>
+    </div>
+  </div>
+  <div class="flavor-count" id="headerCount">28 flavors</div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">&#9906;</span>
+    <input type="text" id="searchInput" placeholder="Search flavors, ingredients, allergens...">
+  </div>
+  <div class="filter-pills">
+    <button class="pill-btn active-all" id="btnAll" onclick="setFilter('all')">All</button>
+    <button class="pill-btn" id="btnIC" onclick="setFilter('ic')">Ice Cream</button>
+    <button class="pill-btn" id="btnSO" onclick="setFilter('so')">Sorbet</button>
+  </div>
+</div>
+
+<div class="sort-bar">
+  <span class="sort-label">Sort by</span>
+  <button class="sort-btn" id="sort-name" onclick="setSort('name')">Name <span class="sort-arrow" id="arr-name"></span></button>
+  <button class="sort-btn" id="sort-sugar" onclick="setSort('sugar')">Sugar <span class="sort-arrow" id="arr-sugar"></span></button>
+  <button class="sort-btn" id="sort-calories" onclick="setSort('calories')">Calories <span class="sort-arrow" id="arr-calories"></span></button>
+  <button class="sort-btn" id="sort-fat" onclick="setSort('fat')">Fat <span class="sort-arrow" id="arr-fat"></span></button>
+  <button class="sort-btn" id="sort-protein" onclick="setSort('protein')">Protein <span class="sort-arrow" id="arr-protein"></span></button>
+  <button class="sort-btn" id="sort-sodium" onclick="setSort('sodium')">Sodium <span class="sort-arrow" id="arr-sodium"></span></button>
+  <button class="sort-btn" id="sort-carbs" onclick="setSort('carbs')">Carbs <span class="sort-arrow" id="arr-carbs"></span></button>
+</div>
+
+<div class="results-bar">
+  <span id="resultsText">Showing all 28 flavors</span>
+</div>
+
+<div class="cards-grid" id="cardsGrid"></div>
+
+<footer>
+  Information accurate as of 2025 &nbsp;&middot;&nbsp; Serving size is 2/3 cup &nbsp;&middot;&nbsp; Manufactured by Dreyer's Grand Ice Cream, Inc.
+</footer>
+
+<script>
+const data = [
+  { name:"Dark Cherry Truffle", cat:"Ice Cream", desc:"Cherry vanilla ice cream swirled with cherry ribbons and soft cocoa truffles", serving:135, calories:330, fat:20, satfat:12, chol:90, sodium:55, carbs:33, fiber:1, sugar:31, addedsugars:25, protein:5, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg, Soy" },
+  { name:"Brownies à la Mode", cat:"Ice Cream", desc:"Vanilla ice cream with chocolate brownies", serving:131, calories:340, fat:19, satfat:10, chol:85, sodium:135, carbs:37, fiber:1, sugar:29, addedsugars:25, protein:6, gf:false, kosher:true, dairy:true, allergens:"Milk, Wheat, Egg" },
+  { name:"Chocolate", cat:"Ice Cream", desc:"Pure, sweet cream combined with the finest cocoa", serving:129, calories:310, fat:21, satfat:12, chol:110, sodium:55, carbs:27, fiber:1, sugar:25, addedsugars:19, protein:6, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg" },
+  { name:"Coffee", cat:"Ice Cream", desc:"Creamy ice cream blended with Brazilian coffee", serving:129, calories:320, fat:21, satfat:13, chol:105, sodium:65, carbs:26, fiber:0, sugar:25, addedsugars:18, protein:6, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg" },
+  { name:"Coffee Chip", cat:"Ice Cream", desc:"Coffee ice cream with chocolaty chips", serving:133, calories:360, fat:23, satfat:15, chol:100, sodium:60, carbs:32, fiber:1, sugar:30, addedsugars:23, protein:6, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg, Soy" },
+  { name:"Cookie Dough", cat:"Ice Cream", desc:"Vanilla ice cream with chunks of cookie dough and chocolaty chips", serving:133, calories:380, fat:22, satfat:13, chol:90, sodium:90, carbs:41, fiber:1, sugar:33, addedsugars:28, protein:5, gf:false, kosher:true, dairy:true, allergens:"Milk, Wheat, Egg, Soy" },
+  { name:"Cookies & Cream", cat:"Ice Cream", desc:"Vanilla ice cream with chocolate cookies", serving:131, calories:330, fat:21, satfat:13, chol:100, sodium:135, carbs:32, fiber:1, sugar:27, addedsugars:21, protein:5, gf:false, kosher:true, dairy:true, allergens:"Milk, Wheat, Egg" },
+  { name:"Irish Cream Brownie", cat:"Ice Cream", desc:"Irish Cream infused ice cream with chocolate brownie pieces and fudge swirl", serving:133, calories:360, fat:22, satfat:11, chol:85, sodium:120, carbs:38, fiber:1, sugar:31, addedsugars:26, protein:5, gf:false, kosher:true, dairy:true, allergens:"Milk, Egg, Wheat", alcohol:true },
+  { name:"Mint Chip", cat:"Ice Cream", desc:"Mint ice cream with chocolaty chips", serving:136, calories:370, fat:24, satfat:15, chol:100, sodium:85, carbs:34, fiber:1, sugar:29, addedsugars:25, protein:6, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg, Soy" },
+  { name:"Belgian Chocolate", cat:"Ice Cream", desc:"Dark chocolate ice cream with Belgian chocolate shavings", serving:133, calories:400, fat:27, satfat:16, chol:100, sodium:50, carbs:39, fiber:3, sugar:34, addedsugars:29, protein:6, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg, Soy" },
+  { name:"Butter Pecan", cat:"Ice Cream", desc:"Pure, sweet cream combined with roasted pecans", serving:129, calories:370, fat:27, satfat:12, chol:95, sodium:130, carbs:26, fiber:1, sugar:21, addedsugars:18, protein:6, gf:true, kosher:true, dairy:true, allergens:"Milk, Pecan, Egg" },
+  { name:"Dulce de Leche", cat:"Ice Cream", desc:"Caramel ice cream with caramel swirl", serving:136, calories:360, fat:21, satfat:14, chol:100, sodium:100, carbs:36, fiber:0, sugar:34, addedsugars:28, protein:6, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg, Soy" },
+  { name:"White Choc Raspberry Truffle", cat:"Ice Cream", desc:"White chocolate ice cream with fudge truffles and a swirl of raspberry", serving:136, calories:360, fat:20, satfat:12, chol:90, sodium:80, carbs:40, fiber:1, sugar:36, addedsugars:33, protein:5, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg, Soy" },
+  { name:"Peppermint Bark", cat:"Ice Cream", desc:"White chocolate ice cream with dark & white chocolate peppermint bark and candy pieces", serving:132, calories:370, fat:21, satfat:14, chol:90, sodium:60, carbs:39, fiber:0, sugar:37, addedsugars:32, protein:5, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg, Soy" },
+  { name:"Pineapple Coconut", cat:"Ice Cream", desc:"Pure, sweet cream with pineapple chunks and coconut flavor", serving:126, calories:300, fat:17, satfat:10, chol:85, sodium:5, carbs:32, fiber:0, sugar:31, addedsugars:24, protein:4, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg" },
+  { name:"Pistachio", cat:"Ice Cream", desc:"Roasted pistachio nuts gently mixed with pure sweet cream ice cream", serving:132, calories:360, fat:25, satfat:12, chol:100, sodium:130, carbs:27, fiber:1, sugar:22, addedsugars:18, protein:8, gf:true, kosher:true, dairy:true, allergens:"Milk, Pistachio, Egg" },
+  { name:"Pralines & Cream", cat:"Ice Cream", desc:"Vanilla ice cream with caramel swirl and praline pecans", serving:129, calories:340, fat:21, satfat:11, chol:95, sodium:140, carbs:31, fiber:0, sugar:29, addedsugars:23, protein:5, gf:false, kosher:true, dairy:true, allergens:"Milk, Pecan, Egg" },
+  { name:"Rocky Road", cat:"Ice Cream", desc:"Chocolate ice cream with marshmallow swirl and roasted almonds", serving:137, calories:380, fat:22, satfat:11, chol:90, sodium:70, carbs:40, fiber:2, sugar:32, addedsugars:26, protein:7, gf:true, kosher:true, dairy:true, allergens:"Milk, Almond, Egg" },
+  { name:"Rum Raisin", cat:"Ice Cream", desc:"Pure, sweet cream combined with rum-soaked raisins", serving:131, calories:320, fat:20, satfat:13, chol:85, sodium:65, carbs:29, fiber:0, sugar:26, addedsugars:15, protein:5, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg" },
+  { name:"Salted Brown Butter Cookie", cat:"Ice Cream", desc:"Brown butter ice cream with milk chocolaty chips and cookie pieces with a touch of salt", serving:131, calories:360, fat:22, satfat:14, chol:90, sodium:100, carbs:37, fiber:1, sugar:33, addedsugars:28, protein:5, gf:false, kosher:true, dairy:true, allergens:"Milk, Wheat, Egg, Soy" },
+  { name:"Strawberry", cat:"Ice Cream", desc:"Pure, sweet cream combined with sun-ripened strawberries", serving:133, calories:300, fat:19, satfat:11, chol:90, sodium:60, carbs:29, fiber:1, sugar:28, addedsugars:20, protein:5, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg" },
+  { name:"Vanilla", cat:"Ice Cream", desc:"Pure, sweet cream combined with Madagascar vanilla", serving:129, calories:320, fat:21, satfat:13, chol:95, sodium:75, carbs:26, fiber:0, sugar:25, addedsugars:18, protein:6, gf:true, kosher:true, dairy:true, allergens:"Milk, Egg" },
+  { name:"Vanilla Swiss Almond", cat:"Ice Cream", desc:"Vanilla ice cream with chocolate coated almonds", serving:133, calories:370, fat:25, satfat:13, chol:95, sodium:85, carbs:30, fiber:1, sugar:25, addedsugars:22, protein:7, gf:true, kosher:true, dairy:true, allergens:"Milk, Almond, Egg" },
+  { name:"NY Strawberry Cheesecake", cat:"Ice Cream", desc:"Velvety cheesecake ice cream with strawberry swirl and spiced graham cracker crust pieces", serving:129, calories:300, fat:20, satfat:12, chol:90, sodium:105, carbs:44, fiber:0, sugar:24, addedsugars:19, protein:4, gf:false, kosher:true, dairy:true, allergens:"Milk, Wheat, Egg" },
+  { name:"Mango", cat:"Sorbet", desc:"Blended mangos pureed to create refreshing sorbet", serving:151, calories:200, fat:0, satfat:0, chol:0, sodium:5, carbs:50, fiber:2, sugar:44, addedsugars:40, protein:0, gf:true, kosher:true, dairy:false, allergens:"May contain Milk, Egg" },
+  { name:"Raspberry", cat:"Sorbet", desc:"Blended raspberries pureed to create sweet but tangy sorbet", serving:141, calories:170, fat:0, satfat:0, chol:0, sodium:20, carbs:42, fiber:0, sugar:36, addedsugars:34, protein:0, gf:true, kosher:true, dairy:false, allergens:"May contain Milk, Egg" },
+  { name:"Strawberry", cat:"Sorbet", desc:"Blended strawberries pureed to create refreshing sorbet", serving:154, calories:170, fat:0, satfat:0, chol:0, sodium:10, carbs:42, fiber:2, sugar:36, addedsugars:36, protein:0, gf:true, kosher:true, dairy:false, allergens:"May contain Milk, Egg" },
+  { name:"Summer Blueberry & Lemon", cat:"Sorbet", desc:"Pacific Northwest blueberries blended with bright, zesty lemon", serving:143, calories:190, fat:0, satfat:0, chol:0, sodium:30, carbs:47, fiber:1, sugar:33, addedsugars:31, protein:0, gf:true, kosher:true, dairy:false, allergens:"May contain Milk, Egg" },
+];
+
+const MAX_SUGAR = Math.max(...data.map(d => d.sugar));
+let currentFilter = 'all';
+let sortKey = 'name';
+let sortDir = 1;
+
+function setFilter(f) {
+  currentFilter = f;
+  document.getElementById('btnAll').className = 'pill-btn' + (f==='all'?' active-all':'');
+  document.getElementById('btnIC').className = 'pill-btn' + (f==='ic'?' active-ic':'');
+  document.getElementById('btnSO').className = 'pill-btn' + (f==='so'?' active-so':'');
+  render();
+}
+
+function setSort(key) {
+  if (sortKey === key) sortDir *= -1;
+  else { sortKey = key; sortDir = 1; }
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sort-arrow').forEach(a => a.textContent = '');
+  document.getElementById('sort-' + key).classList.add('active');
+  document.getElementById('arr-' + key).textContent = sortDir === 1 ? ' ↑' : ' ↓';
+  render();
+}
+
+function render() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let rows = data.filter(d => {
+    const matchCat = currentFilter === 'all' || (currentFilter === 'ic' && d.cat === 'Ice Cream') || (currentFilter === 'so' && d.cat === 'Sorbet');
+    const matchQ = !q || d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q) || d.allergens.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  rows.sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (typeof av === 'string') return sortDir * av.localeCompare(bv);
+    return sortDir * (av - bv);
+  });
+
+  document.getElementById('headerCount').textContent = rows.length + ' flavor' + (rows.length !== 1 ? 's' : '');
+  document.getElementById('resultsText').textContent = rows.length === data.length
+    ? 'Showing all 28 flavors'
+    : 'Showing ' + rows.length + ' of 28 flavors';
+
+  const grid = document.getElementById('cardsGrid');
+  if (rows.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div style="font-size:32px;opacity:0.3">&#9906;</div><p>No flavors match your search.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = rows.map(d => {
+    const isSorbet = d.cat === 'Sorbet';
+    const hlClass = isSorbet ? 'sorbet-hl' : 'highlight';
+    const sugarPct = Math.round((d.sugar / MAX_SUGAR) * 100);
+    const tags = [];
+    if (d.gf) tags.push('<span class="attr-tag tag-gf">Gluten Free</span>');
+    if (d.kosher) tags.push('<span class="attr-tag tag-ko">Kosher OU-D</span>');
+    if (!d.dairy) tags.push('<span class="attr-tag tag-nd">Non-Dairy</span>');
+    if (d.alcohol) tags.push('<span class="attr-tag tag-al">&lt;0.5% Alcohol</span>');
+    tags.push('<span class="attr-tag tag-al2">Contains: ' + d.allergens + '</span>');
+
+    return `<div class="flavor-card ${isSorbet ? 'is-sorbet' : 'is-ice-cream'}">
+      <div class="card-header">
+        <div class="card-top">
+          <div class="card-name">${d.name}</div>
+          <span class="type-badge ${isSorbet ? 'badge-so' : 'badge-ic'}">${d.cat}</span>
+        </div>
+        <div class="card-desc">${d.desc}</div>
+      </div>
+
+      <div class="sugar-row">
+        <div>
+          <div class="sugar-label">Total Sugar</div>
+          <div class="sugar-sub">Added: ${d.addedsugars}g</div>
+        </div>
+        <div class="sugar-bar-wrap">
+          <div class="sugar-bar-bg">
+            <div class="sugar-bar-fill" style="width:${sugarPct}%"></div>
+          </div>
+        </div>
+        <div class="sugar-val">${d.sugar}g</div>
+      </div>
+
+      <div class="nutrition-grid">
+        <div class="nutr-cell">
+          <div class="nutr-val ${hlClass}">${d.calories}</div>
+          <div class="nutr-label">Calories</div>
+        </div>
+        <div class="nutr-cell">
+          <div class="nutr-val">${d.fat}<span class="nutr-unit">g</span></div>
+          <div class="nutr-label">Total Fat</div>
+        </div>
+        <div class="nutr-cell">
+          <div class="nutr-val">${d.satfat}<span class="nutr-unit">g</span></div>
+          <div class="nutr-label">Sat Fat</div>
+        </div>
+        <div class="nutr-cell">
+          <div class="nutr-val">${d.protein}<span class="nutr-unit">g</span></div>
+          <div class="nutr-label">Protein</div>
+        </div>
+        <div class="nutr-cell">
+          <div class="nutr-val">${d.carbs}<span class="nutr-unit">g</span></div>
+          <div class="nutr-label">Carbs</div>
+        </div>
+        <div class="nutr-cell">
+          <div class="nutr-val">${d.fiber}<span class="nutr-unit">g</span></div>
+          <div class="nutr-label">Fiber</div>
+        </div>
+        <div class="nutr-cell">
+          <div class="nutr-val">${d.chol}<span class="nutr-unit">mg</span></div>
+          <div class="nutr-label">Cholesterol</div>
+        </div>
+        <div class="nutr-cell">
+          <div class="nutr-val">${d.sodium}<span class="nutr-unit">mg</span></div>
+          <div class="nutr-label">Sodium</div>
+        </div>
+      </div>
+
+      <div class="card-footer">${tags.join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('searchInput').addEventListener('input', render);
+document.getElementById('sort-name').classList.add('active');
+document.getElementById('arr-name').textContent = ' ↑';
+render();
+</script>
+</body>
+</html>
